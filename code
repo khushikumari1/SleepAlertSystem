@@ -1,0 +1,64 @@
+float SENSE = A0;
+int BOUT = 12;
+int LED = 5;
+int i = 0;
+int j = 0;
+
+void setup() {
+  pinMode(SENSE, INPUT);
+  pinMode(BOUT, OUTPUT);
+  pinMode(LED, OUTPUT);  // This line was missing in your original code
+  Serial.begin(9600);
+}
+
+void loop() {
+  if (!digitalRead(SENSE)) {
+    j = 0;
+    digitalWrite(BOUT, LOW);
+    digitalWrite(LED, LOW);
+  } else {
+    delay(2500);
+    if (!digitalRead(SENSE)) {
+      j = 0;
+      digitalWrite(BOUT, LOW);
+      digitalWrite(LED, LOW);
+    } else {
+      digitalWrite(BOUT, HIGH);
+      digitalWrite(LED, HIGH);
+      i++;
+      j++;
+      Serial.print("Pause check:");
+      Serial.println(i);
+      Serial.print("Continuous check:");
+      Serial.println(j);
+      if (j == 5) {
+        digitalWrite(BOUT, LOW);
+        digitalWrite(LED, LOW);
+        Serial.println("SLEEP MODE");
+        Serial.println("Provided Fuel For Distance determined by GPS to put car on halt");
+        delay(1200000);
+        digitalWrite(BOUT, HIGH);
+        delay(15000);
+        digitalWrite(BOUT, LOW);
+      }
+    }
+  }
+  if (i == 4) {
+    if (digitalRead(SENSE))
+      Serial.println("Notification: Take Some Rest");
+  } else if (i == 8) {
+    if (digitalRead(SENSE)) {
+      Serial.println("One more nap and your vehicle will go into sleep mode");
+      Serial.println("Warning! Take Some Rest");
+    }
+  } else if (i == 10) {
+    digitalWrite(BOUT, LOW);
+    digitalWrite(LED, LOW);
+    Serial.println("SLEEP MODE");
+    Serial.println("Provided Fuel For Distance determined by GPS to put car on halt");
+    delay(1200000);
+    digitalWrite(BOUT, HIGH);
+    delay(15000);
+    digitalWrite(BOUT, LOW);
+  }
+}
